@@ -1,2 +1,140 @@
-# serverless-spa-portfolio
-AUSG seminar 2018/Node.js 서버리스 프레임웍을 사용하여 싱글페이지 포트폴리오 제작하기
+# Node.js 서버리스 프레임웍을 사용하여 싱글페이지 포트폴리오 제작하기
+
+## 준비물
+
+- AWS 계정
+- GitHub 계정
+- Node.js, NPM(혹은 Yarn) 설치
+  - Node.js 버전은 8.10(AWS Lambda의 최신 노드 버전)
+  - 기왕이면 NVM을 이용해주세요.
+- 각자 사용하시는 에디터(혹은 IDE)
+  - 저는 vscode를 사용할 예정입니다.
+
+
+
+## 1. GitHub Repository 만들기
+
+1. 홈페이지 화면에서 "New repository"를 클릭합니다.
+
+![스크린샷 2018-09-14 오후 3.59.15](./assets/images/image-1.png)
+
+
+
+2. 내용을 채워주세요!
+
+![image-20180914160318336](./assets/images/image-2.png)
+
+
+
+3. Git client에서 `clone`해주세요. GUI 어플리케이션이 있다면 사용하셔도 됩니다.(전 GitKraken을 사용합니다. 짱짱🤩)
+
+![image-20180914160318336](./assets/images/image-2.1.png)
+
+    ```bash
+    $git clone https://github.com/<username>/<projectName>.git
+    ```
+
+
+
+4. 해당 디렉토리로 이동합니다. `$cd <projectName>`
+5. 이제 에디터로 넘어가시죠!
+
+
+
+## 2. 개념 설명
+
+### [AWS Lambda](https://aws.amazon.com/ko/lambda/)
+
+> AWS Lambda를 사용하면 서버를 프로비저닝하거나 관리할 필요 없이 코드를 실행할 수 있습니다. 사용한 컴퓨팅 시간만큼만 비용을 지불하고, 코드가 실행되지 않을 때는 요금이 부과되지 않습니다. 
+>
+> Lambda에서는 사실상 모든 유형의 애플리케이션이나 백엔드 서비스에 대한 코드를 별도의 관리 없이 실행할 수  있습니다. 코드를 업로드하기만 하면, Lambda에서 높은 가용성으로 코드를 실행 및 확장하는 데 필요한 모든 것을 처리합니다.  다른 AWS 서비스에서 코드를 자동으로 트리거하도록 설정하거나 웹 또는 모바일 앱에서 직접 코드를 호출할 수 있습니다.
+>
+> \- AWS 홈페이지 설명 -
+
+즉, 서버는 AWS에서 관리합니다😎. 고객은 코드만 관리하세요.😍(쏘 박력)
+
+#### 유사 제품
+
+- [GCP Cloud Functions](https://cloud.google.com/functions/)/[Firebase Functions](https://firebase.google.com/products/functions/)
+- [MS Azure Functions](https://azure.microsoft.com/ko-kr/services/functions/)
+- [IBM](https://www.ibm.com/cloud/functions), [네이버](https://www.ncloud.com/product/compute/cloudFunctions) 등등
+
+
+
+### [AWS API Gateway](https://aws.amazon.com/ko/api-gateway/?nc2=type_a)
+
+> 모든 규모의 API를 생성, 유지 관리 및 보호
+
+> Amazon API Gateway는 어떤 규모에서든 개발자가 API를 손쉽게 생성, 게시, 유지 관리, 모니터링 및 보안할 수 
+> 있게 해주는 완전관리형 서비스입니다. AWS Management Console에서 클릭 몇 번으로 애플리케이션이 백엔드 서비스의 데이터, 비즈니스 로직 또는 기능(예: [Amazon Elastic Compute Cloud(EC2)](https://aws.amazon.com/ko/ec2/)에서 실행되는 워크로드, [AWS Lambda](https://aws.amazon.com/ko/lambda/)에서 실행되는 코드, 기타 웹 애플리케이션 등)에 액세스할 수 있도록 "현관문" 역할을 하는 API를 생성할 수 있습니다.
+
+http/https 프로토콜을 통해 들어오는 모든 API Endpoint를 생성하고 관리해줍니다. 
+
+이걸 통해서 http로 들어온 요청을 Lambda에 연결해줄 수 있어요!(너와 나의 연결고리⛓)
+
+
+
+### [Express.js](http://expressjs.com/ko/)
+
+웹 어플리케이션과 API를 위한 웹 프레임워크입니다.
+
+**클라이언트로부터 http request를 받아 express가 미들웨어와 라우터에 따라서 처리하고 response를 전달합니다.** 
+
+일반적으로는 listen()을 통해 서버가 지속적으로 클라이언트의 요청을 기다립니다.
+
+#### **그렇다면 express가 request만 전달 받을 수 있다면? 굳이 listen()을 쓰기 위해 계속 켜져 있을 필요가 있을까?🤔**
+
+
+
+### [Serverless Framework](https://serverless.com/)
+
+![image-20180914164502085](./assets/images/image-3.png)
+
+Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Functions)과 연계 자원(Database, Endpoint, Event 등)을 손쉽게 구성하고 사용할 수 있습니다.
+
+> AWS의 경우 CloudFormation이라는 서비스를 이용하여 통합 관리합니다.
+>
+> 코드는 S3에 업로드 됩니다.
+>
+> Lambda는 S3에 올라간 코드를 불러와서 실행됩니다.
+>
+> API는 해당 Lambda에 연결됩니다.
+
+- [Documents](https://serverless.com/framework/docs/providers/aws/)
+- [QuickStart](https://serverless.com/framework/docs/providers/aws/guide/quick-start/)
+
+
+
+## 3. Serverless Framework 구성하기
+
+1. Serverless Framework 설치하기 
+    `npm i -g serverless` or `yarn global add serverless`
+
+2. Serverless Framework template 사용하기 [#](a857dbcedddc1f8c79efc23e30ae0fbe052f737e)
+    `serverless create --template aws-nodejs --name MyPortfolio`
+
+    > **serverless의 약자로 sls를 쓸수 있어요!!**
+
+3. `./serverless.yml`파일에서 `provider.runtime`의 노드 버전을 `nodejs6.10` -> `nodejs8.10`로 변경해줍니다. [#](43955f19bf5912ea2dc8b74409d86b53e02e0789)
+
+4. 26번째 줄 `provider.region: us-east-1`에 주석을 풀고 region을 `us-east-1`(버지니아주)에서 `ap-northeast-2`(서울)으로 바꿔줍니다. [#](e217bfd2a469e048f272c45335b8c4e4e12ff72f)
+
+5. 배포를 해봅시다. `sls deploy [-v] [--aws-profile <name>]`
+
+    > --verbose / -v ..................... Show all stack events during deployment(배포 과정 자세히 보기)
+    >
+    > --aws-profile은 AWS credential이 여러개여서 관리되는 계정으로 배포할때 옵션으로 주세요.
+    > 혹은 provider.profile에 credential name을 적어주셔도 됩니다. [참고](https://serverless.com/framework/docs/providers/aws/guide/credentials#setup-with-the-aws-cli)
+
+    ![image-20180914174359317](./assets/images/image-4.png)
+
+    ![image-20180914174202760](./assets/images/image-5.png)
+
+    ![image-20180914174244543](./assets/images/image-6.png)
+
+6. 함수를 실행해볼까요? `sls invoke -f hello`
+
+    > {
+    > ​    "statusCode": 200,
+    > ​    "body": "{\"message\":\"Go Serverless v1.0! Your function executed successfully!\",\"input\":{}}"
+    > }
