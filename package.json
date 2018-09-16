@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "express": "^4.16.3",
+    "serverless-http": "^1.6.0"
+  },
+  "name": "serverless-spa-portfolio",
+  "version": "1.0.0",
+  "main": "serverless.js",
+  "repository": "https://github.com/yoonhoGo/serverless-spa-portfolio.git",
+  "author": "Yoonho Go <enoch@erion.kr>",
+  "license": "MIT",
+  "scripts": {
+    "start": "sls offline",
+    "deploy": "sls deploy"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.25.12"
+  }
+}

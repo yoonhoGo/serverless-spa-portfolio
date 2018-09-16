@@ -1,14 +1,14 @@
 # Node.js 서버리스 프레임웍을 사용하여 싱글페이지 포트폴리오 제작하기
 
-## 준비물
+## 사전 준비
 
 - AWS 계정
 - GitHub 계정
 - Node.js, NPM(혹은 Yarn) 설치
-  - Node.js 버전은 8.10(AWS Lambda의 최신 노드 버전)
-  - 기왕이면 NVM을 이용해주세요.
+    - Node.js 버전은 8.10(AWS Lambda의 최신 노드 버전)
+    - 기왕이면 NVM을 이용해주세요.
 - 각자 사용하시는 에디터(혹은 IDE)
-  - 저는 vscode를 사용할 예정입니다.
+    - 저는 vscode를 사용할 예정입니다.
 
 
 
@@ -23,6 +23,7 @@
 2. 내용을 채워주세요!
 
 ![image-20180914160318336](./assets/images/image-2.png)
+
 
 
 
@@ -138,3 +139,62 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     > ​    "statusCode": 200,
     > ​    "body": "{\"message\":\"Go Serverless v1.0! Your function executed successfully!\",\"input\":{}}"
     > }
+
+
+## 4. package.json, serverless-offline 구성하기
+> package.json이란? 간단히 설명하면 npm 관리를 위해 사용
+
+> serverless-offline이란? serverless 플러그인 중 하나로 로컬에서 동일한 환경으로 실행 가능하도록 도와줍니다.
+1. `npm init` or `yarn init`
+2. package.json에 명령 등록
+    ```json
+    // pakcage.json
+    {
+        ...
+        "scripts": {
+            "start": "sls offline",
+            "deploy": "sls deploy"
+        }
+    }
+    ```
+3. [serverless-offline](https://github.com/dherault/serverless-offline): `npm i serverless-offline --only=dev` or `yarn add serverless-offline --dev`
+4. serverless.yml에 serverless-offline 추가하기
+    ```yml
+    # serverless.yml
+    plugins:
+        - serverless-offline
+    ```
+
+## 5. Express.js를 Lambda에 올리기
+1. express 코드를 작성하기 전에 받아야하는 라이브러리들이 있습니다.
+    `npm i express serverless-http` or `yarn add express serverless-http`
+    1. express
+    2. [serverless-http](https://github.com/dougmoscrop/serverless-http) or [aws-serverless-express](https://github.com/awslabs/aws-serverless-express)
+        > lambda handler를 통해 들어온 event 파라매터를 express 같은 web framework에 잘 전달해주기 위한 라이브러리입니다.
+
+        > 여기서는 가볍게 사용할 수 있는 serverless-http를 사용하겠습니다.
+
+2. express 코드를 작성해봅시다.
+    ```javascript
+    // app.js
+    const express = require('express')
+
+    const app = express()
+
+    app.get('/', (req, res) => res.send('Ok! Hello world!'))
+
+    module.exports = app
+    ```
+3. express에 lambda 이벤트를 전달해주는 라이브러리를 연결해줍니다.
+    ```javascript
+    // handler.js
+    'use strict';
+    const serverless = require('serverless-http')
+    const app = require('./app')
+
+    module.exports.hello = serverless(app)
+    ```
+4. 잘 되는지 확인해봅시다!
+    1. `npm run start` or `yarn start`
+    2. 인터넷 브라우저에서 http://localhost:3000
+    > Ok! Hello world!
