@@ -2,9 +2,9 @@ const express = require('express')
 
 const app = express()
 
-app.get('/static', (req, res) => {
-  const staticURI = 'https://github.com/yoonhoGo/serverless-spa-portfolio/blob/master/static'
-  res.redirect(301, `${staticURI}/${req.path}`)
+app.use('/static', (req, res) => {
+  const staticURI = 'https://raw.githubusercontent.com/yoonhoGo/serverless-spa-portfolio/master/static'
+  res.redirect(`${staticURI}${req.path}`)
 })
 
 app.get('/', (req, res) => {
