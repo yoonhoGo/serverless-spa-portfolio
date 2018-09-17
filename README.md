@@ -211,9 +211,10 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     > Ok! Hello world!
 
 ## 6. Single Page Portfolio
-1. 메인 페이지 만들기 [`./index.html`](https://github.com/yoonhoGo/serverless-spa-portfolio/blob/master/index.html)
+1. 메인 페이지 만들기 [`./index.html`](https://gist.github.com/yoonhoGo/bcd7731762d650f27b014943b83ea61e)
 2. 메인 페이지 서빙하기
     ```javascript
+    // app.js
     const express = require('express')
 
     const app = express()
@@ -229,3 +230,42 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 
     module.exports = app
     ```
+
+## 7. API 만들기 [#](https://gist.github.com/yoonhoGo/8d7e914ba558375642e311ff723e5732)
+1. 두가지 방법
+    1. 하나의 express 안에서 여러개의 endpoint 만들기
+    2. **API Gateway에서 endpoint 별로 나뉘어 복수의 express 만들기**
+2. 이름 바꾸기: `handler.js` -> `webHandler.js` / `app.js` -> `web.js`
+3. 새로운 파일: `apiHandler.js`, `api.js`
+4. `serverless.yml`에서 `functions` 수정
+    ```yml
+    functions:
+        web:
+            handler: webHandler.handler
+            events:
+            - http:
+                path: /
+                method: ANY
+                cors: true
+            - http:
+                path: /{proxy+}
+                method: ANY
+                cors: true
+        api:
+            handler: apiHandler.handler
+            events:
+            - http:
+                path: /api
+                method: ANY
+                cors: true
+            - http:
+                path: /api/{proxy+}
+                method: ANY
+                cors: true
+    ```
+
+---
+
+## 마무리
+1. `npm run start` or `yarn start`로 테스트
+2. `npm run deploy` or `yarn deploy`로 develop 배포

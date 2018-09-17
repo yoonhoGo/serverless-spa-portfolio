@@ -42,8 +42,14 @@ provider:
 #            - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+#   environment:
+#     STAGE: ${self:provider.stage}
+#     NODE_ENV: ${self:custom.nodeEnv.${self:provider.stage}}
+
+# custom:
+#   nodeEnv:
+#     dev: production
+#     prod: production
 
 # you can add packaging information here
 #package:
@@ -55,8 +61,8 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  web:
+    handler: webHandler.handler
     events:
       - http:
           path: /
@@ -64,6 +70,17 @@ functions:
           cors: true
       - http:
           path: /{proxy+}
+          method: ANY
+          cors: true
+  api:
+    handler: apiHandler.handler
+    events:
+      - http:
+          path: /api
+          method: ANY
+          cors: true
+      - http:
+          path: /api/{proxy+}
           method: ANY
           cors: true
 
