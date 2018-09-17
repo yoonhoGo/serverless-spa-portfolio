@@ -120,7 +120,18 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 
 4. 26번째 줄 `provider.region: us-east-1`에 주석을 풀고 region을 `us-east-1`(버지니아주)에서 `ap-northeast-2`(서울)으로 바꿔줍니다. [#](e217bfd2a469e048f272c45335b8c4e4e12ff72f)
 
-5. 배포를 해봅시다. `sls deploy [-v] [--aws-profile <name>]`
+5. AWS 계정을 등록합니다. [#](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
+    1. serverless config: `serverless config credentials --provider aws --key AKIAIOSFODNN7EXAMPLE --secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`
+    2. aws-cli: `aws configure`
+    > AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+    >
+    > AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    >
+    > Default region name [None]: us-west-2
+    >
+    > Default output format [None]: ENTER
+
+6. 배포를 해봅시다. `sls deploy [-v] [--aws-profile <name>]`
 
     > --verbose / -v ..................... Show all stack events during deployment(배포 과정 자세히 보기)
     >
@@ -133,7 +144,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 
     ![image-20180914174244543](./assets/images/image-6.png)
 
-6. 함수를 실행해볼까요? `sls invoke -f hello`
+7. 함수를 실행해볼까요? `sls invoke -f hello`
 
     > {
     > ​    "statusCode": 200,
@@ -198,3 +209,23 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     1. `npm run start` or `yarn start`
     2. 인터넷 브라우저에서 http://localhost:3000
     > Ok! Hello world!
+
+## 6. Single Page Portfolio
+1. 메인 페이지 만들기 [`./index.html`](https://github.com/yoonhoGo/serverless-spa-portfolio/blob/master/index.html)
+2. 메인 페이지 서빙하기
+    ```javascript
+    const express = require('express')
+
+    const app = express()
+
+    app.get('/static', (req, res) => {
+        const staticURI = 'https://github.com/yoonhoGo/serverless-spa-portfolio/blob/master/static'
+        res.redirect(301, `${staticURI}/${req.path}`)
+    })
+
+    app.get('/', (req, res) => {
+        res.type('html').sendfile('index.html')
+    })
+
+    module.exports = app
+    ```

@@ -11,9 +11,11 @@
   "license": "MIT",
   "scripts": {
     "start": "sls offline",
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "remove": "sls remove"
   },
   "devDependencies": {
-    "serverless-offline": "^3.25.12"
+    "serverless-offline": "^3.25.12",
+    "serverless-s3-sync": "^1.6.1"
   }
 }
