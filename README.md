@@ -176,25 +176,25 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     ```yml
     # serverless.yml
     plugins:
-        - serverless-offline
+      - serverless-offline
 
     provider:
-        ...
-        environment:
-            STAGE: ${self:provider.stage}
+      ...
+      environment:
+        STAGE: ${self:provider.stage}
 
     functions:
-        hello:
-            ...
-            events:
-                - http:
-                    path: /
-                    method: ANY
-                    cors: true
-                - http:
-                    path: /{proxy+}
-                    method: ANY
-                    cors: true
+      hello:
+        ...
+        events:
+          - http:
+              path: /
+              method: ANY
+              cors: true
+          - http:
+              path: /{proxy+}
+              method: ANY
+              cors: true
     ```
 
 ## 5. Express.js를 Lambda에 올리기
