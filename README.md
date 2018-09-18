@@ -16,20 +16,20 @@
 
 1. 홈페이지 화면에서 "New repository"를 클릭합니다.
 
-![스크린샷 2018-09-14 오후 3.59.15](./assets/images/image-1.png)
+    ![스크린샷 2018-09-14 오후 3.59.15](./assets/images/image-1.png)
 
 
 
 2. 내용을 채워주세요!
 
-![image-20180914160318336](./assets/images/image-2.png)
+    ![image-20180914160318336](./assets/images/image-2.png)
 
 
 
 
 3. Git client에서 `clone`해주세요. GUI 어플리케이션이 있다면 사용하셔도 됩니다.(전 GitKraken을 사용합니다. 짱짱🤩)
 
-![image-20180914160318336](./assets/images/image-2.1.png)
+    ![image-20180914160318336](./assets/images/image-2.1.png)
 
     ```bash
     $git clone https://github.com/<username>/<projectName>.git
@@ -120,7 +120,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 
 4. 26번째 줄 `provider.region: us-east-1`에 주석을 풀고 region을 `us-east-1`(버지니아주)에서 `ap-northeast-2`(서울)으로 바꿔줍니다. [#](e217bfd2a469e048f272c45335b8c4e4e12ff72f)
 
-5. AWS 계정을 등록합니다. [#](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
+5. AWS 계정을 등록합니다. 아래의 1, 2 방법 중 하나를 선택적으로 하시면 됩니다. (김예본님 감사합니다) [#](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
     1. serverless config: `serverless config credentials --provider aws --key AKIAIOSFODNN7EXAMPLE --secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`
     2. aws-cli: `aws configure`
     > AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE \
@@ -128,18 +128,23 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     > Default region name [None]: us-west-2 \
     > Default output format [None]: ENTER
 
-6. 배포를 해봅시다. `sls deploy [-v] [--aws-profile <name>]`
+    > **AWS credential을 모른다면?**(김예본님, 김예은님 감사합니다)
+    > ![image-3.1](./assets/images/image-3.1.png)
+    > ![image-3.2](./assets/images/image-3.2.png)
+    > ![image-3.3](./assets/images/image-3.3.png)
+    > ![image-3.4](./assets/images/image-3.4.png)
+6. 배포를 해봅시다. `sls deploy [-v] [--aws-profile <name>]` ([]는 선택 옵션입니다) (김예은님 감사합니다)
 
     > --verbose / -v ..................... Show all stack events during deployment(배포 과정 자세히 보기)
     >
     > --aws-profile은 AWS credential이 여러개여서 관리되는 계정으로 배포할때 옵션으로 주세요.
     > 혹은 provider.profile에 credential name을 적어주셔도 됩니다. [참고](https://serverless.com/framework/docs/providers/aws/guide/credentials#setup-with-the-aws-cli)
 
-    ![image-20180914174359317](./assets/images/image-4.png)
+    ![image-4](./assets/images/image-4.png)
 
-    ![image-20180914174202760](./assets/images/image-5.png)
+    ![image-5](./assets/images/image-5.png)
 
-    ![image-20180914174244543](./assets/images/image-6.png)
+    ![image-6](./assets/images/image-6.png)
 
 7. 함수를 실행해볼까요? `sls invoke -f hello`
 
@@ -161,7 +166,8 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
         ...
         "scripts": {
             "start": "sls offline --stage=local",
-            "deploy": "sls deploy"
+            "deploy": "sls deploy",
+            "remove": "sls remove"
         }
     }
     ```
@@ -245,6 +251,13 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 ## 8. 테스트
 1. `npm run start --stage=local` or `yarn start --stage=local`로 테스트
 2. `npm run deploy` or `yarn deploy`로 develop 배포
+
+## 9. 프로젝트 삭제
+> (허진호님 감사합니다)
+
+Q. 혹여라도 요금을 절약해야 한다면? \
+A. 다음 명령어를 실행시켜 줍니다. \
+`sls remove`, `npm run remove` or `yarn run remove`
 
 ---
 
