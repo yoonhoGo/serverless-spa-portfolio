@@ -2,18 +2,20 @@ const AWS = require('aws-sdk')
 const express = require('express')
 const bodyParser = require('body-parser')
 
-const credentials = new AWS.SharedIniFileCredentials({profile: 'isMe'});
-AWS.config.credentials = credentials;
+if (process.env.STAGE === 'local') {
+  const credentials = new AWS.SharedIniFileCredentials({profile: 'isMe'});
+  AWS.config.credentials = credentials;
+}
+
 const dynamodb = new AWS.DynamoDB.DocumentClient({
   region: 'ap-northeast-2',
 })
 
 const app = express()
-const router = express.Router()
 
-app.use(bodyParser())
+app.use(bodyParser.json())
 
-router.post('/api/contact', (req, res, next) => {
+app.post('/api/contact', (req, res, next) => {
   if (!req.body.name) {
     throw new Error('please give a param `name`.')
   } else if (!req.body.subject) {
@@ -36,8 +38,5 @@ router.post('/api/contact', (req, res, next) => {
 
   res.json(req.body)
 })
-
-// app.use(process.env.NODE_ENV === 'production' ? `/${process.env.STAGE}` : '/', router)
-app.use(router)
 
 module.exports = app

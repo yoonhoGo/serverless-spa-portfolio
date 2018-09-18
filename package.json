@@ -12,7 +12,7 @@
   "author": "Yoonho Go <enoch@erion.kr>",
   "license": "MIT",
   "scripts": {
-    "start": "sls offline",
+    "start": "sls offline --stage=local",
     "deploy": "sls deploy",
     "remove": "sls remove"
   },

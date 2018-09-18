@@ -22,10 +22,11 @@ provider:
   runtime: nodejs8.10
 
 # you can overwrite defaults here
-#  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: ap-northeast-2
 
 # you can add statements to the Lambda function's IAM Role here
+  # role: defaultRole
 #  iamRoleStatements:
 #    - Effect: "Allow"
 #      Action:
@@ -42,8 +43,8 @@ provider:
 #            - "/*"
 
 # you can define service wide environment variables here
-#   environment:
-#     STAGE: ${self:provider.stage}
+  environment:
+    STAGE: ${self:provider.stage}
 #     NODE_ENV: ${self:custom.nodeEnv.${self:provider.stage}}
 
 # custom:
@@ -65,24 +66,26 @@ functions:
     handler: webHandler.handler
     events:
       - http:
-          path: /
-          method: ANY
-          cors: true
+        path: /
+        method: ANY
+        cors: true
       - http:
-          path: /{proxy+}
-          method: ANY
-          cors: true
+        path: /{proxy+}
+        method: ANY
+        cors: true
   api:
     handler: apiHandler.handler
     events:
       - http:
-          path: /api
-          method: ANY
-          cors: true
+        path: /api
+        method: ANY
+        cors: true
       - http:
-          path: /api/{proxy+}
-          method: ANY
-          cors: true
+        path: /api/{proxy+}
+        method: ANY
+        cors: true
+    role: apiRole
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -118,8 +121,54 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
+resources:
+  Resources:
+    portfolioContactTable: # dynamodb table logicalName
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: portfolio-contact
+        AttributeDefinitions:
+          - AttributeName: createdAt
+            AttributeType: N
+        KeySchema:
+          - AttributeName: createdAt
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    apiRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ApiRole
+        Path: "/portfolio/api/"
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+        Policies:
+          - PolicyName: root
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: arn:aws:logs:*:*:*
+          - PolicyName: forDynamo
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:PutItem
+                  Resource: 
+                    Fn::GetAtt: portfolioContactTable.Arn # dynamodb table logicalName
+
 #    NewResource:
 #      Type: AWS::S3::Bucket
 #      Properties:

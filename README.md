@@ -123,12 +123,9 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 5. AWS 계정을 등록합니다. [#](https://serverless.com/framework/docs/providers/aws/guide/credentials/)
     1. serverless config: `serverless config credentials --provider aws --key AKIAIOSFODNN7EXAMPLE --secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`
     2. aws-cli: `aws configure`
-    > AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
-    >
-    > AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-    >
-    > Default region name [None]: us-west-2
-    >
+    > AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE \
+    > AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY \
+    > Default region name [None]: us-west-2 \
     > Default output format [None]: ENTER
 
 6. 배포를 해봅시다. `sls deploy [-v] [--aws-profile <name>]`
@@ -146,9 +143,9 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 
 7. 함수를 실행해볼까요? `sls invoke -f hello`
 
-    > {
-    > ​    "statusCode": 200,
-    > ​    "body": "{\"message\":\"Go Serverless v1.0! Your function executed successfully!\",\"input\":{}}"
+    > {\
+    > ​    "statusCode": 200,\
+    > ​    "body": "{\"message\":\"Go Serverless v1.0! Your function executed successfully!\",\"input\":{}}"\
     > }
 
 
@@ -163,7 +160,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     {
         ...
         "scripts": {
-            "start": "sls offline",
+            "start": "sls offline --stage=local",
             "deploy": "sls deploy"
         }
     }
@@ -174,6 +171,11 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     # serverless.yml
     plugins:
         - serverless-offline
+
+    provider:
+        ...
+        environment:
+            STAGE: ${self:provider.stage}
     ```
 
 ## 5. Express.js를 Lambda에 올리기
@@ -206,7 +208,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     module.exports.hello = serverless(app)
     ```
 4. 잘 되는지 확인해봅시다!
-    1. `npm run start` or `yarn start`
+    1. `npm run start --stage=local` or `yarn start --stage=local`
     2. 인터넷 브라우저에서 http://localhost:3000
     > Ok! Hello world!
 
@@ -225,7 +227,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     })
 
     app.get('/', (req, res) => {
-        res.type('html').sendfile('index.html')
+        res.type('html').sendFile(__dirname + '/index.html')
     })
 
     module.exports = app
@@ -237,35 +239,26 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     2. **API Gateway에서 endpoint 별로 나뉘어 복수의 express 만들기**
 2. 이름 바꾸기: `handler.js` -> `webHandler.js` / `app.js` -> `web.js`
 3. 새로운 파일: `apiHandler.js`, `api.js`
-4. `serverless.yml`에서 `functions` 수정
-    ```yml
-    functions:
-        web:
-            handler: webHandler.handler
-            events:
-            - http:
-                path: /
-                method: ANY
-                cors: true
-            - http:
-                path: /{proxy+}
-                method: ANY
-                cors: true
-        api:
-            handler: apiHandler.handler
-            events:
-            - http:
-                path: /api
-                method: ANY
-                cors: true
-            - http:
-                path: /api/{proxy+}
-                method: ANY
-                cors: true
-    ```
+4. `serverless.yml`에서 `functions` 수정, `resource` 추가
+
+
+## 8. 테스트
+1. `npm run start --stage=local` or `yarn start --stage=local`로 테스트
+2. `npm run deploy` or `yarn deploy`로 develop 배포
 
 ---
 
-## 마무리
-1. `npm run start` or `yarn start`로 테스트
-2. `npm run deploy` or `yarn deploy`로 develop 배포
+## 결론
+더 해보면 좋을 것들
+* [ ] Typescript
+* [ ] Rendering Solutions
+    * express render
+    * Nuxt.js 같은 Front-end Framwork
+* [ ] RESTful API/Graphql
+* [ ] S3에 static 파일 배포 자동화
+* [ ] CI 배포 자동화
+    * Circle CI
+    * Travis CI
+    * Jenkins
+    * ...(너무 많...)
+* [ ] AWS Custom Domain

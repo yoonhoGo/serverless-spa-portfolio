@@ -13,7 +13,7 @@
   <nav class="navbar is-black is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="#main">
-        <img src="/static/images/AUSG_Branding-07.png" alt="AUSG: AWSKRUG University Student Group!">
+        <img src="./static/images/AUSG_Branding-07.png" alt="AUSG: AWSKRUG University Student Group!">
         &nbsp; AUSG
       </a>
 
@@ -79,7 +79,7 @@
   </section>
 
   <section class="section" id="contact">
-    <form method="POST" action="/api/contact">
+    <div class="container">
       <div class="field is-horizontal">
         <div class="field-label is-normal">
           <label class="label">From</label>
@@ -87,7 +87,7 @@
         <div class="field-body">
           <div class="field">
             <p class="control is-expanded has-icons-left">
-              <input class="input is-danger" type="text" placeholder="Name" name="name">
+              <input class="input is-danger" type="text" placeholder="Name" id="name">
               <span class="icon is-small is-left">
                 <i class="fas fa-user"></i>
               </span>
@@ -98,7 +98,7 @@
           </div>
           <div class="field">
             <p class="control is-expanded has-icons-left has-icons-right">
-              <input class="input" type="email" placeholder="Email" name="email">
+              <input class="input" type="email" placeholder="Email" id="email">
               <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
               </span>
@@ -118,7 +118,7 @@
                 </a>
               </p>
               <p class="control is-expanded">
-                <input class="input" type="tel" placeholder="Your phone number" name="tel">
+                <input class="input" type="tel" placeholder="Your phone number" id="tel">
               </p>
             </div>
             <p class="help">Do not enter the first zero</p>
@@ -133,7 +133,7 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <input class="input is-danger" type="text" placeholder="e.g. Partnership opportunity" name="subject">
+              <input class="input is-danger" type="text" placeholder="e.g. Partnership opportunity" id="subject">
             </div>
             <p class="help is-danger">
               This field is required
@@ -149,7 +149,7 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <textarea class="textarea" placeholder="Explain how we can help you" name="question"></textarea>
+              <textarea class="textarea" placeholder="Explain how we can help you" id="question"></textarea>
             </div>
           </div>
         </div>
@@ -162,14 +162,14 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <button class="button is-primary" type="submit">
+              <button class="button is-primary" type="submit" onclick="onContact()">
                 Send message
               </button>
             </div>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   </section>
 
   <footer class="footer">
@@ -179,6 +179,27 @@
       </p>
     </div>
   </footer>
+
+  <script>
+    async function onContact() {
+      const data = JSON.stringify({
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        tel: document.getElementById('tel').value,
+        subject: document.getElementById('subject').value,
+        question: document.getElementById('question').value,
+      })
+
+      fetch('./api/contact', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: data,
+      }).then(response => alert('메시지 감사해요! 😄'))
+        .catch(error => alert('전송 실패했어요 😂'))
+    }
+  </script>
 </body>
 
 </html>
