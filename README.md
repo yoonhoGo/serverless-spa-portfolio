@@ -172,7 +172,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     }
     ```
 3. [serverless-offline](https://github.com/dherault/serverless-offline): `npm i serverless-offline --only=dev` or `yarn add serverless-offline --dev`
-4. serverless.yml에 serverless-offline 추가하기
+4. serverless.yml에 serverless-offline 추가하고 API Gateway 추가하기
     ```yml
     # serverless.yml
     plugins:
@@ -182,6 +182,19 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
         ...
         environment:
             STAGE: ${self:provider.stage}
+
+    functions:
+        hello:
+            ...
+            events:
+                - http:
+                    path: /
+                    method: ANY
+                    cors: true
+                - http:
+                    path: /{proxy+}
+                    method: ANY
+                    cors: true
     ```
 
 ## 5. Express.js를 Lambda에 올리기
