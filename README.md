@@ -227,7 +227,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
     module.exports.hello = serverless(app)
     ```
 4. 잘 되는지 확인해봅시다!
-    1. `npm run start --stage=local` or `yarn start --stage=local`
+    1. `npm run start` or `yarn start`
     2. 인터넷 브라우저에서 http://localhost:3000
     > Ok! Hello world!
 
@@ -262,7 +262,7 @@ Cloud 제공업체(AWS, GCP, Azure, IBM etc.)의 서버리스 모델(Lambda, Fun
 
 
 ## 8. 테스트
-1. `npm run start --stage=local` or `yarn start --stage=local`로 테스트
+1. `npm run start` or `yarn start`로 테스트
 2. `npm run deploy` or `yarn deploy`로 develop 배포
 
 ## 9. 프로젝트 삭제
